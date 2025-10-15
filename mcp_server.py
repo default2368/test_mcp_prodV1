@@ -1,8 +1,6 @@
 from fastmcp import FastMCP
-import asyncio
 from datetime import datetime
-import uvicorn
-from fastapi import FastAPI
+import psutil
 
 # Crea server MCP
 mcp = FastMCP("FlyMCP-Server")
@@ -62,9 +60,6 @@ async def format_text(text: str, style: str = "normal"):
 @mcp.tool()
 async def get_system_status():
     """Restituisce lo stato del sistema"""
-    import psutil
-    import os
-    
     return {
         "cpu_percent": psutil.cpu_percent(),
         "memory_usage": psutil.virtual_memory().percent,
