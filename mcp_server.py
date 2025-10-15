@@ -1,6 +1,9 @@
 from fastmcp import FastMCP
 from datetime import datetime
 import psutil
+from http.server import HTTPServer, BaseHTTPRequestHandler
+import threading
+import json
 
 # Crea server MCP
 mcp = FastMCP("FlyMCP-Server")
@@ -37,38 +40,40 @@ async def calculate_operation(operation: str, numbers: list):
         "timestamp": datetime.now().isoformat()
     }
 
-@mcp.tool()
-async def format_text(text: str, style: str = "normal"):
-    """Formatta il testo in diversi stili"""
-    styles = {
-        "uppercase": text.upper(),
-        "lowercase": text.lower(),
-        "title": text.title(),
-        "reverse": text[::-1]
-    }
+# Health Check HTTP Server
+class HealthHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == '/health':
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            response = {
+                "status": "healthy",
+                "service": "FlyMCP-Server",
+                "timestamp": datetime.now().isoformat()
+            }
+            self.wfile.write(json.dumps(response).encode())
+        else:
+            self.send_response(404)
+            self.end_headers()
     
-    formatted = styles.get(style, text)
-    
-    return {
-        "original": text,
-        "formatted": formatted,
-        "style": style,
-        "length": len(text),
-        "timestamp": datetime.now().isoformat()
-    }
+    def log_message(self, format, *args):
+        # Disabilita logging HTTP
+        pass
 
-@mcp.tool()
-async def get_system_status():
-    """Restituisce lo stato del sistema"""
-    return {
-        "cpu_percent": psutil.cpu_percent(),
-        "memory_usage": psutil.virtual_memory().percent,
-        "disk_usage": psutil.disk_usage('/').percent,
-        "boot_time": datetime.fromtimestamp(psutil.boot_time()).isoformat(),
-        "timestamp": datetime.now().isoformat()
-    }
+def start_http_server():
+    """Avvia un semplice server HTTP per health checks"""
+    server = HTTPServer(('0.0.0.0', 8080), HealthHandler)
+    print("🌐 HTTP Health Check server running on port 8080")
+    server.serve_forever()
 
 if __name__ == "__main__":
-    print("🚀 FlyMCP Server starting on stdio transport...")
-    print("📍 Server ready for MCP clients")
+    print("🚀 Starting FlyMCP Server with HTTP health check...")
+    
+    # Avvia HTTP server in thread separato
+    http_thread = threading.Thread(target=start_http_server, daemon=True)
+    http_thread.start()
+    
+    # Avvia server MCP
+    print("🔧 MCP Server ready for stdio connections")
     mcp.run(transport="stdio")
