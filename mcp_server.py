@@ -1,9 +1,33 @@
 from fastmcp import FastMCP
 from datetime import datetime
 import psutil
+import uuid
 
 # Crea server MCP
 mcp = FastMCP("FlyMCP-Server")
+
+# Gestisce initialize e genera sessionId
+@mcp.initialize_handler
+async def handle_initialize(params):
+    """Gestisce initialize e genera sessionId"""
+    session_id = str(uuid.uuid4())
+    capabilities = params.get("capabilities", {})
+    
+    return {
+        "protocolVersion": params.get("protocolVersion", "2024-11-05"),
+        "sessionId": session_id,
+        "capabilities": {
+            "experimental": {},
+            "prompts": {"listChanged": True},
+            "resources": {"subscribe": False, "listChanged": True},
+            "tools": {"listChanged": True},
+            **capabilities
+        },
+        "serverInfo": {
+            "name": "FlyMCP-Server",
+            "version": "1.17.0"
+        }
+    }
 
 @mcp.tool()
 async def get_server_info():
@@ -68,9 +92,9 @@ async def get_system_status():
     }
 
 if __name__ == "__main__":
-    print("🚀 FlyMCP Server starting on HTTP transport (port 8080)...")
-    print("📍 MCP Tools available via HTTP")
+    print("🚀 FlyMCP Server starting on SSE transport (port 8080)...")
+    print("📍 MCP Tools available via SSE")
     print("🔧 Tools: get_server_info, calculate_operation, format_text, get_system_status")
     
-    # Avvia server MCP su HTTP invece di stdio
-    mcp.run(transport="http", port=8080, host="0.0.0.0")
+    # Avvia server MCP con SSE e gestione sessioni
+    mcp.run(transport="sse", port=8080, host="0.0.0.0")
