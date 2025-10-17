@@ -2,32 +2,38 @@ from fastmcp import FastMCP
 from datetime import datetime
 import psutil
 import uuid
+from typing import Dict, Any
 
-# Crea server MCP
-mcp = FastMCP("FlyMCP-Server")
+# Crea server MCP con gestione sessioni
+class MCPServer(FastMCP):
+    def __init__(self, name: str):
+        super().__init__(name)
+        self._sessions = {}  # Dizionario per tenere traccia delle sessioni
 
-# Gestisce initialize e genera sessionId
-@mcp.initialize_handler
-async def handle_initialize(params):
-    """Gestisce initialize e genera sessionId"""
-    session_id = str(uuid.uuid4())
-    capabilities = params.get("capabilities", {})
-    
-    return {
-        "protocolVersion": params.get("protocolVersion", "2024-11-05"),
-        "sessionId": session_id,
-        "capabilities": {
-            "experimental": {},
-            "prompts": {"listChanged": True},
-            "resources": {"subscribe": False, "listChanged": True},
-            "tools": {"listChanged": True},
-            **capabilities
-        },
-        "serverInfo": {
-            "name": "FlyMCP-Server",
-            "version": "1.17.0"
-        }
-    }
+    async def handle_request(self, method: str, params: Dict[Any, Any] = None) -> Dict[Any, Any]:
+        """Override del metodo handle_request per gestire initialize e sessioni"""
+        if method == "initialize":
+            session_id = str(uuid.uuid4())
+            self._sessions[session_id] = {"created_at": datetime.now().isoformat()}
+            
+            return {
+                "protocolVersion": params.get("protocolVersion", "2024-11-05"),
+                "sessionId": session_id,
+                "capabilities": {
+                    "experimental": {},
+                    "prompts": {"listChanged": True},
+                    "resources": {"subscribe": False, "listChanged": True},
+                    "tools": {"listChanged": True}
+                },
+                "serverInfo": {
+                    "name": self.name,
+                    "version": "1.17.0"
+                }
+            }
+        return await super().handle_request(method, params)
+
+# Istanzia il server MCP personalizzato
+mcp = MCPServer("FlyMCP-Server")
 
 @mcp.tool()
 async def get_server_info():
