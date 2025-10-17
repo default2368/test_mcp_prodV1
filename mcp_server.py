@@ -103,4 +103,4 @@ if __name__ == "__main__":
     print("🔧 Tools: get_server_info, calculate_operation, format_text, get_system_status")
     
     # Avvia server MCP con SSE e gestione sessioni
-    mcp.run(transport="sse", port=8080, host="0.0.0.0")
+    mcp.run(transport="sse", port=8080, host="0.0.0.0", base_path="/sse")
