@@ -73,4 +73,4 @@ if __name__ == "__main__":
     print("🔧 Tools: get_server_info, calculate_operation, format_text, get_system_status")
     
     # Avvia server MCP su HTTP invece di stdio
-    mcp.run(transport="sse", port=8080, host="0.0.0.0")
+    mcp.run(transport="http", port=8080, host="0.0.0.0")
