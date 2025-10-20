@@ -10,4 +10,4 @@ COPY main.py .
 # Installa psutil per system stats
 RUN pip install psutil
 
-CMD ["python", "mcp_server.py"]
+CMD ["python", "main.py"]
