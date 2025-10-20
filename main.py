@@ -5,7 +5,7 @@ Main application entry point for MCP Server
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from config import Config
+from server_config import Config
 
 app = FastAPI(
     title="MCP Server",
