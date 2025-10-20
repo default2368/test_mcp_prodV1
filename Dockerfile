@@ -5,7 +5,7 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY mcp_server.py .
+COPY main.py .
 
 # Installa psutil per system stats
 RUN pip install psutil

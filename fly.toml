@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for test-mcp-prodv1 on 2025-10-15T09:07:45Z
+# fly.toml app configuration file generated for test-mcp-prodv2 on 2025-10-19T12:08:24+02:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'test-mcp-prodv1'
+app = 'test-mcp-prodv2'
 primary_region = 'fra'
 
 [build]
@@ -20,4 +20,3 @@ primary_region = 'fra'
   memory = '512mb'
   cpu_kind = 'shared'
   cpus = 1
-  memory_mb = 512
