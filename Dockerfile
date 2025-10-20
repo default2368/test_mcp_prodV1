@@ -5,7 +5,8 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY main.py .
+# Copy Python files explicitly
+COPY ["main.py", "server_config.py", "/app/"]
 
 # Installa psutil per system stats
 RUN pip install psutil
