@@ -1,5 +1,5 @@
 """
-Configuration for Unified MCP Server
+Configuration for FastMPC MCP Server - CORRETTO per Fly.io
 """
 import os
 import json
@@ -9,15 +9,15 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Config:
-    # Server Configuration
+    # Server Configuration - IMPORTANTE: 8080 per Fly.io
     HOST = os.getenv('HOST', '0.0.0.0')
-    PORT = int(os.getenv('PORT', 8080))
+    PORT = int(os.getenv('PORT', 8080))  # ← CAMBIA 8000 a 8080
     DEBUG = os.getenv('DEBUG', 'false').lower() == 'true'
     
-    # MCP Server URL - per uso remoto
+    # MCP Server URL
     MCP_SERVER_URL = os.getenv('MCP_SERVER_URL', 'https://test-mcp-prodv2.fly.dev')
     
-    # FastAPI Server URL 
+    # FastAPI Server URL
     FASTAPI_SERVER_URL = os.getenv('FASTAPI_SERVER_URL', 'https://test-mcp-prodv2.fly.dev')
     
     # FastMPC Configuration
@@ -41,19 +41,6 @@ class Config:
     
     # Logging
     LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')
-    
-    @classmethod
-    def to_dict(cls):
-        return {
-            'host': cls.HOST,
-            'port': cls.PORT,
-            'debug': cls.DEBUG,
-            'mcp_server_url': cls.MCP_SERVER_URL,
-            'fastapi_server_url': cls.FASTAPI_SERVER_URL,
-            'fastmpc_enabled': cls.FASTMPC_ENABLED,
-            'allowed_origins': cls.ALLOWED_ORIGINS,
-            'log_level': cls.LOG_LEVEL
-        }
 
 # Example usage:
 if __name__ == "__main__":
