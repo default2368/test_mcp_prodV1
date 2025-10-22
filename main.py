@@ -8,9 +8,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from config import Config
 
 app = FastAPI(
-    title="MCP Server",
-    description="Server per la gestione delle richieste MCP",
-    version="1.0.0"
+    title="Fly MCP Server",
+    description="Flyio MCP Test Server",
+    version="0.2"
 )
 
 # Configurazione CORS
