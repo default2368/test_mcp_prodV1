@@ -8,7 +8,7 @@ primary_region = 'fra'
   HOST = "0.0.0.0"
   DEBUG = "false"
   LOG_LEVEL = "info"
-  MCP_SERVER_URL = "https://test-mcp-prodv2.fly.dev"
+  MCP_SERVER_URL = "https://test-mcp-prodv1.fly.dev"
   FASTAPI_SERVER_URL = "https://test-mcp-prodv2.fly.dev"
 
 [http_service]
