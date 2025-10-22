@@ -6,6 +6,8 @@ import asyncio
 import json
 import sys
 import subprocess
+from fastapi import FastAPI, Request
+import uvicorn
 
 async def handle_mcp_protocol():
     """Minimal MCP server implementation"""
@@ -189,5 +191,50 @@ async def handle_mcp_protocol():
             }
             print(json.dumps(error_response), flush=True)
 
+# Create FastAPI app
+app = FastAPI()
+
+@app.post("/mcp")
+async def handle_mcp(request: Request):
+    """Handle MCP protocol over HTTP"""
+    try:
+        data = await request.json()
+        method = data.get("method")
+        msg_id = data.get("id")
+        
+        print(f"Received: {method}", file=sys.stderr)
+        
+        if method == "initialize":
+            return {
+                "jsonrpc": "2.0",
+                "id": msg_id,
+                "result": {
+                    "protocolVersion": "2024-11-05",
+                    "capabilities": {
+                        "tools": {},
+                        "resources": {}
+                    },
+                    "serverInfo": {
+                        "name": "fly-mcp-server",
+                        "version": "1.0.0"
+                    }
+                }
+            }
+        
+        # Add other method handlers here
+        
+        return {"error": "Method not implemented"}
+    except Exception as e:
+        return {"error": str(e)}
+
+def run_server():
+    """Run the FastAPI server"""
+    uvicorn.run(
+        "main:app",
+        host="0.0.0.0",
+        port=8080,
+        log_level="info"
+    )
+
 if __name__ == "__main__":
-    asyncio.run(handle_mcp_protocol())
+    run_server()
