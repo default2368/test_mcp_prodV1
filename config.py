@@ -11,7 +11,7 @@ load_dotenv()
 class Config:
     # Server Configuration
     HOST = os.getenv('HOST', '0.0.0.0')
-    PORT = int(os.getenv('MCP_PORT', 8000))
+    PORT = int(os.getenv('MCP_PORT', 8080))
     DEBUG = os.getenv('DEBUG', 'false').lower() == 'true'
     
     # MCP Server URL - fallback a produzione se non specificato
